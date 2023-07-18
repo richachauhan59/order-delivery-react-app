@@ -42,7 +42,14 @@ async def get_state(pk: str):
     if state is not None:
         return json.loads(state)
 
-    return {}
+    state = build_state(pk)
+    return state
+
+def build_state(pk: str):
+    pks = Event.all_pk()
+    all_events = [Event.get(pk) for pk in pks]
+    events = [event for event in all_events if event.delivery_id == pk]
+    return events
 
 @app.post('/deliveries/create')
 async def create(request: Request):
